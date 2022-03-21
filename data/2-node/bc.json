@@ -1,0 +1,15 @@
+{
+    "boundary_nonslack_flow": {
+        "2": {
+            "injection": null,
+            "withdrawal": 275.0, 
+            "concentration": null
+        }
+    },
+    "boundary_pslack": {
+        "1": {
+            "pressure": 4.336678212541887e6,
+            "concentration": 0.10
+        }
+    }
+}

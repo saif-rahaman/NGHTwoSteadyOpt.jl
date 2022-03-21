@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<!--                                                                                   -->
+<!--                  This file is part of the BMWi project 0328006                    -->
+<!--                      Technical Capacities of Gas Networks                         -->
+<!--                                                                                   -->
+<!-- Copyright (C) 2013                                                                -->
+<!-- FAU Erlangen-Nuremberg, HU Berlin, LU Hannover, TU Darmstadt,                     -->
+<!-- University Duisburg-Essen, WIAS Berlin, Zuse Institute Berlin                     -->
+<!-- Contact: Thorsten Koch (koch@zib.de)                                              -->
+<!-- All rights reserved.                                                              -->
+<!--                                                                                   -->
+<!-- This work is licensed under the Creative Commons Attribution 3.0 Unported License.-->
+<!-- To view a copy of this license, visit http://creativecommons.org/licenses/by/3.0/ -->
+<!-- or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View,-->
+<!-- California, 94041, USA.                                                           -->
+<!--                                                                                   -->
+<!--                         Please note that you have to cite                         -->
+<!-- Pfetsch et al. (2012) "Validation of Nominations in Gas Network Optimization:     -->
+<!-- Models, Methods, and Solutions", ZIB-Report 12-41                                 -->
+<!--                               if you use this data                                -->
+<!--                                                                                   -->
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+
+<network xmlns:xsi="http://www.w3.org/001/XMLSchema-instance"
+         xmlns="http://gaslib.zib.de/Gas"
+         xsi:schemaLocation="http://gaslib.zib.de/Gas Gas.xsd"
+         xmlns:framework="http://gaslib.zib.de/Framework">
+  <framework:information>
+    <framework:title>GasLib_Integration</framework:title>
+    <framework:type>gas</framework:type>
+    <framework:date>2020-08-05</framework:date>
+    <framework:documentation>gas network for integration testing</framework:documentation>
+  </framework:information>
+  <framework:nodes>
+    <source geoWGS84Long="0.0" alias="" y="0.0" x="0.0" geoWGS84Lat="0.0" id="source_1">
+      <height value="0" unit="meter"/>
+      <pressureMin unit="bar" value="0.0"/>
+      <pressureMax unit="bar" value="25.0"/>
+      <flowMin unit="1000m_cube_per_hour" value="0"/>
+      <flowMax unit="1000m_cube_per_hour" value="15000"/>
+      <gasTemperature unit="Celsius" value="0"/>
+      <calorificValue unit="MJ_per_m_cube" value="36.4543670654"/>
+      <normDensity unit="kg_per_m_cube" value="0.785"/>
+      <coefficient-A-heatCapacity value="31.8251781464"/>
+      <coefficient-B-heatCapacity value="-0.00846800766885"/>
+      <coefficient-C-heatCapacity value="7.44647331885e-05"/>
+      <molarMass unit="kg_per_kmol" value="18.5674"/>
+      <pseudocriticalPressure unit="bar" value="45.9293457336"/>
+      <pseudocriticalTemperature unit="K" value="188.549758911"/>
+    </source>
+    <source geoWGS84Long="0.0" alias="" y="0.0" x="0.0" geoWGS84Lat="0.0" id="source_2">
+      <height value="0" unit="meter"/>
+      <pressureMin unit="bar" value="0.0"/>
+      <pressureMax unit="bar" value="25.0"/>
+      <flowMin unit="1000m_cube_per_hour" value="0"/>
+      <flowMax unit="1000m_cube_per_hour" value="15000"/>
+      <gasTemperature unit="Celsius" value="0"/>
+      <calorificValue unit="MJ_per_m_cube" value="36.4543670654"/>
+      <normDensity unit="kg_per_m_cube" value="0.785"/>
+      <coefficient-A-heatCapacity value="31.8251781464"/>
+      <coefficient-B-heatCapacity value="-0.00846800766885"/>
+      <coefficient-C-heatCapacity value="7.44647331885e-05"/>
+      <molarMass unit="kg_per_kmol" value="18.5674"/>
+      <pseudocriticalPressure unit="bar" value="45.9293457336"/>
+      <pseudocriticalTemperature unit="K" value="188.549758911"/>
+    </source>
+    <source geoWGS84Long="0.0" alias="" y="0.0" x="0.0" geoWGS84Lat="0.0" id="source_3">
+      <height value="0" unit="meter"/>
+      <pressureMin unit="bar" value="0.0"/>
+      <pressureMax unit="bar" value="25.0"/>
+      <flowMin unit="1000m_cube_per_hour" value="0"/>
+      <flowMax unit="1000m_cube_per_hour" value="15000"/>
+      <gasTemperature unit="Celsius" value="0"/>
+      <calorificValue unit="MJ_per_m_cube" value="36.4543670654"/>
+      <normDensity unit="kg_per_m_cube" value="0.785"/>
+      <coefficient-A-heatCapacity value="31.8251781464"/>
+      <coefficient-B-heatCapacity value="-0.00846800766885"/>
+      <coefficient-C-heatCapacity value="7.44647331885e-05"/>
+      <molarMass unit="kg_per_kmol" value="18.5674"/>
+      <pseudocriticalPressure unit="bar" value="45.9293457336"/>
+      <pseudocriticalTemperature unit="K" value="188.549758911"/>
+    </source>
+    <source geoWGS84Long="0.0" alias="" y="0.0" x="0.0" geoWGS84Lat="0.0" id="source_4">
+      <height value="0" unit="meter"/>
+      <pressureMin unit="bar" value="0.0"/>
+      <pressureMax unit="bar" value="25.0"/>
+      <flowMin unit="1000m_cube_per_hour" value="0"/>
+      <flowMax unit="1000m_cube_per_hour" value="15000"/>
+      <gasTemperature unit="Celsius" value="0"/>
+      <calorificValue unit="MJ_per_m_cube" value="36.4543670654"/>
+      <normDensity unit="kg_per_m_cube" value="0.785"/>
+      <coefficient-A-heatCapacity value="31.8251781464"/>
+      <coefficient-B-heatCapacity value="-0.00846800766885"/>
+      <coefficient-C-heatCapacity value="7.44647331885e-05"/>
+      <molarMass unit="kg_per_kmol" value="18.5674"/>
+      <pseudocriticalPressure unit="bar" value="45.9293457336"/>
+      <pseudocriticalTemperature unit="K" value="188.549758911"/>
+    </source>
+    <sink geoWGS84Long="1.0" alias="" y="1.0" x="1.0" geoWGS84Lat="1.0" id="sink_1">
+      <height value="0" unit="meter"/>
+      <pressureMin unit="bar" value="0.0"/>
+      <pressureMax unit="bar" value="25.0"/>
+      <flowMin unit="1000m_cube_per_hour" value="0"/>
+      <flowMax unit="1000m_cube_per_hour" value="15000"/>
+    </sink>
+    <sink geoWGS84Long="1.0" alias="" y="2.0" x="1.0" geoWGS84Lat="3.0" id="sink_2">
+      <height value="0" unit="meter"/>
+      <pressureMin unit="bar" value="0.0"/>
+      <pressureMax unit="bar" value="25.0"/>
+      <flowMin unit="1000m_cube_per_hour" value="0"/>
+      <flowMax unit="1000m_cube_per_hour" value="15000"/>
+    </sink>
+    <sink geoWGS84Long="1.0" alias="" y="3.0" x="1.0" geoWGS84Lat="3.0" id="sink_3">
+      <height value="0" unit="meter"/>
+      <pressureMin unit="bar" value="0.0"/>
+      <pressureMax unit="bar" value="25.0"/>
+      <flowMin unit="1000m_cube_per_hour" value="0"/>
+      <flowMax unit="1000m_cube_per_hour" value="15000"/>
+    </sink>
+    <sink geoWGS84Long="1.0" alias="" y="4.0" x="1.0" geoWGS84Lat="4.0" id="sink_4">
+      <height value="0" unit="meter"/>
+      <pressureMin unit="bar" value="0.0"/>
+      <pressureMax unit="bar" value="25.0"/>
+      <flowMin unit="1000m_cube_per_hour" value="0"/>
+      <flowMax unit="1000m_cube_per_hour" value="15000"/>
+    </sink>
+    <sink geoWGS84Long="1.0" alias="" y="5.0" x="1.0" geoWGS84Lat="5.0" id="sink_5">
+      <height value="0" unit="meter"/>
+      <pressureMin unit="bar" value="0.0"/>
+      <pressureMax unit="bar" value="25.0"/>
+      <flowMin unit="1000m_cube_per_hour" value="0"/>
+      <flowMax unit="1000m_cube_per_hour" value="15000"/>
+    </sink>
+    <sink geoWGS84Long="1.0" alias="" y="6.0" x="1.0" geoWGS84Lat="6.0" id="sink_6">
+      <height value="0" unit="meter"/>
+      <pressureMin unit="bar" value="0.0"/>
+      <pressureMax unit="bar" value="25.0"/>
+      <flowMin unit="1000m_cube_per_hour" value="0"/>
+      <flowMax unit="1000m_cube_per_hour" value="15000"/>
+    </sink>
+    <sink geoWGS84Long="1.0" alias="" y="7.0" x="1.0" geoWGS84Lat="7.0" id="sink_7">
+      <height value="0" unit="meter"/>
+      <pressureMin unit="bar" value="0.0"/>
+      <pressureMax unit="bar" value="25.0"/>
+      <flowMin unit="1000m_cube_per_hour" value="0"/>
+      <flowMax unit="1000m_cube_per_hour" value="15000"/>
+    </sink>
+  </framework:nodes>
+  <framework:connections>
+    <pipe alias="" from="source_1" id="pipe_1" to="sink_1">
+      <flowMin unit="1000m_cube_per_hour" value="-15000"/>
+      <flowMax unit="1000m_cube_per_hour" value="15000"/>
+      <length unit="km" value="1.0"/>
+      <diameter unit="mm" value="1000"/>
+      <roughness unit="mm" value="0.001"/>
+      <pressureMax unit="bar" value="25"/>
+      <heatTransferCoefficient unit="W_per_m_square_per_K" value="1"/>
+    </pipe>
+    <shortPipe alias="" from="source_1" id="shortPipe_1" to="sink_2">
+      <flowMin unit="1000m_cube_per_hour" value="-15000"/>
+      <flowMax unit="1000m_cube_per_hour" value="15000"/>
+    </shortPipe>
+    <resistor alias="" from="source_2" id="resistor_1" to="sink_3">
+      <flowMin unit="1000m_cube_per_hour" value="-15000"/>
+      <flowMax unit="1000m_cube_per_hour" value="15000"/>
+      <dragFactor value="0.1"/>
+      <diameter unit="mm" value="1000"/>
+    </resistor>
+    <compressorStation from="source_1" alias="" gasCoolerExisting="0" fuelGasVertex="sink_4" to="sink_4" internalBypassRequired="1" id="compressorStation_1">
+      <flowMin unit="1000m_cube_per_hour" value="-15000"/>
+      <flowMax unit="1000m_cube_per_hour" value="15000"/>
+      <dragFactorIn value="0"/>
+      <diameterIn unit="mm" value="1000"/>
+      <dragFactorOut value="0"/>
+      <diameterOut unit="mm" value="1000"/>
+      <pressureInMin unit="bar" value="10.0"/>
+      <pressureOutMax unit="bar" value="25.0"/>
+    </compressorStation>
+    <resistor alias="" from="source_2" id="resistor_2" to="sink_5">
+      <flowMin unit="1000m_cube_per_hour" value="-15000"/>
+      <flowMax unit="1000m_cube_per_hour" value="15000"/>
+      <pressureLoss unit="bar" value="1.0"/>
+    </resistor>
+    <valve alias="" from="source_3" id="valve_1" to="sink_6">
+      <flowMin unit="1000m_cube_per_hour" value="-15000"/>
+      <flowMax unit="1000m_cube_per_hour" value="15000"/>
+      <pressureDifferentialMax unit="bar" value="10"/>
+    </valve>
+    <controlValve from="source_4" alias="" gasPreheaterExisting="0" to="sink_7" internalBypassRequired="0" id="controlValve_1">
+      <flowMin unit="1000m_cube_per_hour" value="-15000"/>
+      <flowMax unit="1000m_cube_per_hour" value="15000"/>
+      <pressureDifferentialMin unit="bar" value="0"/>
+      <pressureDifferentialMax unit="bar" value="25"/>
+      <pressureInMin unit="bar" value="0.0"/>
+      <pressureOutMax unit="bar" value="25.0"/>
+      <pressureLossIn unit="bar" value="1.0"/>
+      <pressureLossOut unit="bar" value="1.0"/>
+    </controlValve>
+  </framework:connections>
+</network>
