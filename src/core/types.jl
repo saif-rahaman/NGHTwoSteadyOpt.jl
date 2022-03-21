@@ -86,24 +86,24 @@ Equation ordering helper functions:
         6. boost ratio for compressors 
         7. concentration definition for compressors 
 """
-function get_nodal_eqn_id(ss::SteadyOptimizer, key::Symbol, id::Int64)::Int64 
-    (key == :full_nodal_balance) && (return ref(ss, :node, id, "dof_pressure"))
-    (key == :hydrogen_nodal_balance) && (return ref(ss, :node, id, "dof_concentration"))
-    if key == :slack_pressure
-        (ref(ss, :node, id, "is_slack") == 0) && (@error "$id is not a slack node")
-    end 
-    return ref(ss, :node, id, "dof_slack_injection")
-end 
+# function get_nodal_eqn_id(ss::SteadyOptimizer, key::Symbol, id::Int64)::Int64 
+#     (key == :full_nodal_balance) && (return ref(ss, :node, id, "dof_pressure"))
+#     (key == :hydrogen_nodal_balance) && (return ref(ss, :node, id, "dof_concentration"))
+#     if key == :slack_pressure
+#         (ref(ss, :node, id, "is_slack") == 0) && (@error "$id is not a slack node")
+#     end 
+#     return ref(ss, :node, id, "dof_slack_injection")
+# end 
 
-function get_pipe_eqn_id(ss::SteadyOptimizer, key::Symbol, id::Int64)::Int64
-    (key == :physics) && (return ref(ss, :pipe, id, "dof_flow"))
-    return ref(ss, :pipe, id, "dof_concentration")
-end 
+# function get_pipe_eqn_id(ss::SteadyOptimizer, key::Symbol, id::Int64)::Int64
+#     (key == :physics) && (return ref(ss, :pipe, id, "dof_flow"))
+#     return ref(ss, :pipe, id, "dof_concentration")
+# end 
 
-function get_compressor_eqn_id(ss::SteadyOptimizer, key::Symbol, id::Int64)::Int64
-    (key == :physics) && (return ref(ss, :compressor, id, "dof_flow"))
-    return ref(ss, :compressor, id, "dof_concentration")
-end 
+# function get_compressor_eqn_id(ss::SteadyOptimizer, key::Symbol, id::Int64)::Int64
+#     (key == :physics) && (return ref(ss, :compressor, id, "dof_flow"))
+#     return ref(ss, :compressor, id, "dof_concentration")
+# end 
 
 
 @enum SOLVER_STATUS begin 

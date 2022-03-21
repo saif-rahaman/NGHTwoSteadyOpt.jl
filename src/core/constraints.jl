@@ -1,23 +1,22 @@
-con = Dict()
 
 "Constraint:Pipe Pressure Drop"
-function constraint_pipe_pressure(model,nw,con,var)
+function constraint_pipe_pressure(model,ref,var,con,params)
     con[:pipe_physics] = Dict()
 
     Π = var[:Π]
     f_pipe = var[:f_pipe]
     γ_pipe = var[:γ_pipe]
     
-    for (i, pipe) in nw[:pipe]
-        Π_fr = Π[pipe["fr_junction"]]
-        Π_to = Π[pipe["to_junction"]]
+    for (i, pipe) in ref[:pipe]
+        Π_fr = Π[pipe["fr_node"]]
+        Π_to = Π[pipe["to_node"]]
         f = f_pipe[i]
         γ = γ_pipe[i]
         resistance = pipe["resistance"]
         
-        multiplier = nw[:multiplier]
-        a_h2 = nw[:speed_h2]
-        a_ng = nw[:speed_NG]
+        multiplier = ref[:multiplier]
+        a_h2 = params[:speed_h2]
+        a_ng = params[:speed_NG]
         V = (a_h2^2 * γ + a_ng^2 * (1 - γ))
 
         con[:pipe_physics][i] =
@@ -28,7 +27,7 @@ function constraint_pipe_pressure(model,nw,con,var)
 end
 
 "Constraint:Compressor Pressure"
-function constraint_compressor_pressure(model,nw,con,var)
+function constraint_compressor_pressure(model,ref,var,con)
     con[:compressor_boost] = Dict()
     #con[:compressor_boost_le] = Dict()
     #con[:compressor_boost_ge] = Dict()
@@ -36,20 +35,20 @@ function constraint_compressor_pressure(model,nw,con,var)
     Π = var[:Π]
     #ω = var[:ω]
 
-    for (i, compressor) in nw[:compressor]
-        Π_fr = Π[compressor["fr_junction"]]
-        Π_to = Π[compressor["to_junction"]]
+    for (i, compressor) in ref[:compressor]
+        Π_fr = Π[compressor["fr_node"]]
+        Π_to = Π[compressor["to_node"]]
         #ω = ω[i]
         
-        ω_max = nw[:compressor][i]["c_ratio_max"]^2 
+        ω_max = ref[:compressor][i]["c_ratio_max"]^2 
 
-        con[:compressor_boost][i] = 
-            JuMP.@NLconstraint(model, Π_to - ω * Π_fr == 0)
+        # con[:compressor_boost][i] = 
+        #     JuMP.@NLconstraint(model, Π_to - ω * Π_fr == 0)
 
-        #con[:compressor_boost_le][i] = 
-            #JuMP.@constraint(model, Π_to - ω_max* Π_fr <= 0)
-        #con[:compressor_boost_ge][i] = 
-            #JuMP.@constraint(model, Π_to - Π_fr >= 0)
+        con[:compressor_boost_le][i] = 
+            JuMP.@constraint(model, Π_to - ω_max* Π_fr <= 0)
+        con[:compressor_boost_ge][i] = 
+            JuMP.@constraint(model, Π_to - Π_fr >= 0)
 
     end
 
@@ -57,7 +56,7 @@ function constraint_compressor_pressure(model,nw,con,var)
 end
 
 "Constraint:Node mass flow balance"
-function constraint_mass_flow_balance(model,nw,con,var)
+function constraint_mass_flow_balance(model,ref,var,con)
     con[:nodal_mass_flow_balance] = Dict()
     var[:net_nodal_injection] = Dict()
     var[:net_nodal_edge_out_flow] = Dict()
@@ -67,39 +66,39 @@ function constraint_mass_flow_balance(model,nw,con,var)
     f_pipe = var[:f_pipe]
     f_comp = var[:f_comp]
 
-    for (i, junction) in nw[:junction]
+    for (i, node) in ref[:node]
         var[:net_nodal_injection][i] = 0
-        for j in nw[:dispatchable_receipts_in_junction][i]
+        for j in ref[:dispatchable_receipts_in_node][i]
             var[:net_nodal_injection][i] += qs[j]
         end
-        for j in nw[:dispatchable_deliveries_in_junction][i]
+        for j in ref[:dispatchable_deliveries_in_node][i]
             var[:net_nodal_injection][i] -= qw[j]
         end
-        for j in nw[:nondispatchable_receipts_in_junction][i]
-            var[:net_nodal_injection][i] += nw[:receipt][j]["injection_nominal"]
+        for j in ref[:nondispatchable_receipts_in_node][i]
+            var[:net_nodal_injection][i] += ref[:receipt][j]["injection_nominal"]
         end
-        for j in nw[:nondispatchable_deliveries_in_junction][i]
-            var[:net_nodal_injection][i] -= nw[:delivery][j]["withdrawal_nominal"]
+        for j in ref[:nondispatchable_deliveries_in_node][i]
+            var[:net_nodal_injection][i] -= ref[:delivery][j]["withdrawal_nominal"]
         end
     end
 
-    for (i, junction) in nw[:junction]
+    for (i, node) in ref[:node]
         var[:net_nodal_edge_out_flow][i] = 0
-        for j in nw[:pipes_fr][i]
+        for j in ref[:pipes_fr][i]
             var[:net_nodal_edge_out_flow][i] += f_pipe[j]
         end
-        for j in nw[:compressors_fr][i]
+        for j in ref[:compressors_fr][i]
             var[:net_nodal_edge_out_flow][i] += f_comp[j]
         end
-        for j in nw[:pipes_to][i]
+        for j in ref[:pipes_to][i]
             var[:net_nodal_edge_out_flow][i] -= f_pipe[j]
         end
-        for j in nw[:compressors_to][i]
+        for j in ref[:compressors_to][i]
             var[:net_nodal_edge_out_flow][i] -= f_comp[j]
         end
     end
 
-    for (i, junction) in nw[:junction]
+    for (i, node) in ref[:node]
         net_injection = var[:net_nodal_injection][i]
         net_nodal_edge_out_flow = var[:net_nodal_edge_out_flow][i]
         con[:nodal_mass_flow_balance][i] =
@@ -110,7 +109,7 @@ function constraint_mass_flow_balance(model,nw,con,var)
 end
 
 "Constraint:Node H2 mass flow balance"
-function constraint_mass_flow_balance(model,nw,con)
+function constraint_h2_mass_flow_balance(model,ref,var,con)
     con[:nodal_h2_mass_flow_balance] = Dict()
     var[:net_h2_nodal_injection] = Dict()
     var[:net_h2_nodal_edge_out_flow] = Dict()
@@ -123,41 +122,41 @@ function constraint_mass_flow_balance(model,nw,con)
     γ_pipe = var[:γ_pipe]
     γ_comp = var[:γ_comp]
 
-    for (i, junction) in nw[:junction]
+    for (i, node) in ref[:node]
         var[:net_h2_nodal_injection][i] = 0
-        for j in nw[:dispatchable_receipts_in_junction][i]
-            η_s = nw[:dispatchable_receipt][j]
+        for j in ref[:dispatchable_receipts_in_node][i]
+            η_s = ref[:dispatchable_receipt][j]
             var[:net_h2_nodal_injection][i] += η_s * qs[j]
         end
-        for j in nw[:dispatchable_deliveries_in_junction][i]
+        for j in ref[:dispatchable_deliveries_in_node][i]
             var[:net_h2_nodal_injection][i] -= η[i] * qw[j]
         end
-        for j in nw[:nondispatchable_receipts_in_junction][i]
-            η_s = nw[:dispatchable_receipt][j]
-            var[:net_h2_nodal_injection][i] += η_s * nw[:receipt][j]["injection_nominal"]
+        for j in ref[:nondispatchable_receipts_in_node][i]
+            η_s = ref[:dispatchable_receipt][j]
+            var[:net_h2_nodal_injection][i] += η_s * ref[:receipt][j]["injection_nominal"]
         end
-        for j in nw[:nondispatchable_deliveries_in_junction][i]
-            var[:net_h2_nodal_injection][i] -= η[i] * nw[:delivery][j]["withdrawal_nominal"]
+        for j in ref[:nondispatchable_deliveries_in_node][i]
+            var[:net_h2_nodal_injection][i] -= η[i] * ref[:delivery][j]["withdrawal_nominal"]
         end
     end
 
-    for (i, junction) in nw[:junction]
+    for (i, node) in ref[:node]
         var[:net_h2_nodal_edge_out_flow][i] = 0
-        for j in nw[:pipes_fr][i]
+        for j in ref[:pipes_fr][i]
             var[:net_h2_nodal_edge_out_flow][i] += γ_pipe[j] * f_pipe[j]
         end
-        for j in nw[:compressors_fr][i]
+        for j in ref[:compressors_fr][i]
             var[:net_h2_nodal_edge_out_flow][i] += γ_comp[j] * f_comp[j]
         end
-        for j in nw[:pipes_to][i]
+        for j in ref[:pipes_to][i]
             var[:net_h2_nodal_edge_out_flow][i] -= γ_pipe[j] * f_pipe[j]
         end
-        for j in nw[:compressors_to][i]
+        for j in ref[:compressors_to][i]
             var[:net_h2_nodal_edge_out_flow][i] -= γ_comp[j] * f_comp[j]
         end
     end
 
-    for (i, junction) in nw[:junction]
+    for (i, node) in ref[:node]
         net_h2_injection = var[:net_h2_nodal_injection][i]
         net_h2_nodal_edge_out_flow = var[:net_h2_nodal_edge_out_flow][i]
         con[:nodal_mass_flow_balance][i] =
@@ -168,12 +167,12 @@ function constraint_mass_flow_balance(model,nw,con)
 end
 
 "Constraint:Slack Pressure"
-function constraint_slack_pressure(model,nw,con,var)
+function constraint_slack_pressure(model,ref,var,con)
     con[:slack_pressure] = Dict()
     Π = var[:Π]
-    for (i, junction) in nw[:slack_junctions]
+    for (i, node) in ref[:slack_nodes]
         con[:slack_pressure][i] = 
-            JuMP.@constraint(model, Π[i] == junction["p_nominal"]^2)
+            JuMP.@constraint(model, Π[i] == node["p_nominal"]^2)
     end
 
     return
@@ -182,7 +181,7 @@ end
 "Constraint:Node and Edge concentration"
 
 "Equation-based"
-function constraint_node_edge_conc_equation(model,nw,con,var)
+function constraint_node_edge_conc_equation(model,ref,var,con)
     con[:node_edge_conc_eq_pos] = Dict()
     con[:node_edge_conc_eq_neg] = Dict()
     
@@ -191,11 +190,11 @@ function constraint_node_edge_conc_equation(model,nw,con,var)
     η = var[:η]
 
 
-    for (i, pipe) in nw[:pipe]
+    for (i, pipe) in ref[:pipe]
         f = f_pipe[i]
         γ = γ_pipe[i]
-        η_fr = η[pipe["fr_junction"]]
-        η_to = η[pipe["to_junction"]]
+        η_fr = η[pipe["fr_node"]]
+        η_to = η[pipe["to_node"]]
         
         con[:node_edge_conc_eq_pos][i] = 
             JuMP.@NLconstraint(model, (f^2 + f * abs(f)) * (γ - η_fr) == 0)
@@ -209,7 +208,7 @@ function constraint_node_edge_conc_equation(model,nw,con,var)
 end
 
 "Complementarity-based"
-function constraint_node_edge_conc_complementarity(model,nw,con,var)
+function constraint_node_edge_conc_complementarity(model,ref,var,con)
     con[:node_edge_conc_flow] = Dict()
     con[:node_edge_conc_eq] = Dict()
     con[:node_edge_conc_complementarity_1] = Dict()
@@ -221,31 +220,31 @@ function constraint_node_edge_conc_complementarity(model,nw,con,var)
 
     aux_1 = var[:s1] = 
             JuMP.@variable(model, 
-            [i in keys(nw[:pipe])],
+            [i in keys(ref[:pipe])],
             lower_bound = 0,
             base_name = "positive_auxiliary"
             )
 
     aux_2 = var[:s2] = 
             JuMP.@variable(model, 
-            [i in keys(nw[:pipe])],
+            [i in keys(ref[:pipe])],
             lower_bound = 0,
             base_name = "negative_auxiliary"
             )
 
     aux_3 = var[:ν] = 
             JuMP.@variable(model, 
-            [i in keys(nw[:pipe])],
+            [i in keys(ref[:pipe])],
             lower_bound = 0,
             upper_bound = 1,
             base_name = "switching_variable"
             )
 
-    for (i, pipe) in nw[:pipe]
+    for (i, pipe) in ref[:pipe]
         f = f_pipe[i]
         γ = γ_pipe[i]
-        η_fr = η[pipe["fr_junction"]]
-        η_to = η[pipe["to_junction"]]
+        η_fr = η[pipe["fr_node"]]
+        η_to = η[pipe["to_node"]]
         
         s1 = aux_1[i]
         s2 = aux_2[i]
@@ -270,7 +269,7 @@ function constraint_node_edge_conc_complementarity(model,nw,con,var)
 end
 
 "Integer variable based"
-function constraint_node_edge_conc_integer(model,nw,con,var)
+function constraint_node_edge_conc_integer(model,ref,var,con)
     con[:node_edge_conc_int_eq] = Dict()
     con[:node_edge_conc_int_ineq_1] = Dict()
     con[:node_edge_conc_int_ineq_2] = Dict()
@@ -281,16 +280,16 @@ function constraint_node_edge_conc_integer(model,nw,con,var)
 
     y = var[:y] = 
         JuMP.@variable(model,
-        [i in keys(nw[:pipe])],
+        [i in keys(ref[:pipe])],
         binary = true,
         base_name = "switching_binary_variable"
         )
 
-    for (i, pipe) in nw[:pipe]
+    for (i, pipe) in ref[:pipe]
         f = f_pipe[i]
         γ = γ_pipe[i]
-        η_fr = η[pipe["fr_junction"]]
-        η_to = η[pipe["to_junction"]]
+        η_fr = η[pipe["fr_node"]]
+        η_to = η[pipe["to_node"]]
 
         M = max(abs(pipe["flow_min"]),abs(pipe["flow_max"]))
 
@@ -305,4 +304,24 @@ function constraint_node_edge_conc_integer(model,nw,con,var)
     end
 
     return
+end
+
+
+"Building constraints"
+function build_constraints!(model, ref, var, params)
+
+    con = Dict()
+
+    ####Defining and adding the Constraints####
+
+    constraint_pipe_pressure!(model, ref, var, con, params)
+    constraint_compressor_pressure!(model, ref, var, con)
+    constraint_mass_flow_balance!(model, ref, var, con)
+    constraint_h2_mass_flow_balance!(model, ref, var, con)
+    constraint_slack_pressure!(model, ref, var, con)
+
+    constraint_node_edge_conc_equation!(model, ref, var, con)
+
+    return model, var, con
+
 end

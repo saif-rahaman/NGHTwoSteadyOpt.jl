@@ -51,6 +51,8 @@ function _add_components_to_ref!(ref::Dict{Symbol,Any}, data::Dict{String,Any})
         ref[name][id]["fr_node"] = compressor["from_node"]
         ref[name][id]["control_type"] = unknown_control
         ref[name][id]["c_ratio"] = NaN
+        ref[name][id]["c_ratio_min"] = compressor["c_min"]
+        ref[name][id]["c_ratio_max"] = compressor["c_max"]
         ref[name][id]["discharge_pressure"] = NaN
         ref[name][id]["flow"] = NaN
         ref[name][id]["flow_min"] = compressor["min_flow"]
