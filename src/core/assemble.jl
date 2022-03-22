@@ -7,13 +7,13 @@ function build_gas_model(ss::SteadyOptimizer)
     JuMP.set_optimizer_attribute(gas_model, "print_level", 5)
     JuMP.set_optimizer_attribute(gas_model, "linear_solver", "ma27")
 
-    ref = ref(ss)
+    # ref = ss.ref
 
-    params = ref(ss)
+    # params = ss.params
 
-    gas_model, gas_variables = build_variables!(ref, gas_model)
+    gas_model, gas_variables = build_variables!(ss, gas_model)
 
-    gas_model, gas_variables, gas_constraints = build_constraints!(ref, gas_model, gas_variables, params)
+    gas_model, gas_variables, gas_constraints = build_constraints!(ss, gas_model, gas_variables)
 
     JuMP.optimize!(gas_model)
 

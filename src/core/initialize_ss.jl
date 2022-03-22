@@ -14,13 +14,15 @@ end
 function initialize_optimizer(data::Dict{String,Any}; eos::Symbol=:ideal)::SteadyOptimizer
     params, nominal_values = process_data!(data)
     make_per_unit!(data, params, nominal_values)
-    ref = build_ref(data, ref_extensions= [
-        _add_pipe_info_at_nodes!,
-        _add_compressor_info_at_nodes!,
-        _add_dispatchable_info_at_nodes!,
-        _update_pipe_fields!
-        ]
-    )
+    ref = build_ref(data,
+                    params,
+                    nominal_values, 
+                    ref_extensions= 
+                    [add_pipe_info_at_nodes!,
+                    add_compressor_info_at_nodes!,
+                    add_dispatchable_info_at_nodes! _
+                    #update_pipe_fields!]
+                    )   
 
     ss = SteadyOptimizer(data,
         ref,

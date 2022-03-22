@@ -308,10 +308,12 @@ end
 
 
 "Building constraints"
-function build_constraints!(model, ref, var, params)
+function build_constraints!(ss, model, var)
 
     con = Dict()
 
+    nw = ss.ref
+    
     ####Defining and adding the Constraints####
 
     constraint_pipe_pressure!(model, ref, var, con, params)

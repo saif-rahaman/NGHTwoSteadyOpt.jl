@@ -223,17 +223,20 @@ function _add_dispatchable_info_at_nodes!(ref::Dict{Symbol,Any}, data::Dict{Stri
     return
 end
 
-function _update_pipe_fields!(ref::Dict{Symbol,Any}, data::Dict{String,Any})
+function _update_pipe_fields!(ref::Dict{Symbol,Any}, params, nominal_values, data::Dict{String,Any})
     for (_, pipe) in ref[:pipe]
         i = pipe["fr_node"]
         j = pipe["to_node"]
-        pd_max = max(ref[:node][i]["p_max"],ref[:node][j]["p_max"]) - min(ref[:node][i]["p_min"],ref[:node][j]["p_min"])
-        pd_min = min(ref[:node][i]["p_max"],ref[:node][j]["p_max"]) - max(ref[:node][i]["p_min"],ref[:node][j]["p_min"])
+        pd_max = ref[:node][i]["p_max"]^2 - ref[:node][j]["p_min"]^2
+        pd_min = ref[:node][i]["p_min"]^2 - ref[:node][j]["p_max"]^2
         lambda = pipe["friction_factor"]
-        L = pipe["length"] * ref[:base_length]
+        γ_max = pipe["max_concentration"]
+        a2_max = γ_max * params[:speed_h2]^2 + (1-γ_max) * params[:speed_ng]^2
+        a2_scale = a2_max/(nominal_values[:velocity]^2)
+        L = pipe["length"]
         D = pipe["diameter"]
         pipe["resistance"] = lambda * L / D
-        w = 1 / pipe["resistance"]
+        w = 1 / (a2_scale * pipe["resistance"])
         min_flux = pd_min < 0 ? -sqrt(w * abs(pd_min)) : sqrt(w * abs(pd_min))
         max_flux = pd_max < 0 ? -sqrt(w * abs(pd_max)) : sqrt(w * abs(pd_max))
         pipe["flow_min"] = min_flux * pipe["area"]
@@ -244,6 +247,8 @@ function _update_pipe_fields!(ref::Dict{Symbol,Any}, data::Dict{String,Any})
 end
 
 function build_ref(data::Dict{String,Any};
+    params,
+    nominal_values,
     ref_extensions=[])::Dict{Symbol,Any}
 
     ref = Dict{Symbol,Any}()
@@ -253,6 +258,8 @@ function build_ref(data::Dict{String,Any};
     for extension in ref_extensions
         extension(ref, data)
     end
+
+    _update_pipe_fields!(ref, params, nominal_values, data)
 
     return ref
 end
