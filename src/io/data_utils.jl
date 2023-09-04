@@ -2,6 +2,7 @@ function _parse_data(data_folder::AbstractString;
     case_name::AbstractString="", 
     case_types::Vector{Symbol}=Symbol[], 
     initial_guess_filename::AbstractString="")
+
     network_file = data_folder * "network.json"
     params_file = data_folder * "params"
     bc_file = data_folder * "bc"
@@ -127,6 +128,15 @@ function process_data!(data::Dict{String,Any})
     params[:ng_molar_mass] = 0.02896 * params[:ng_specific_gravity]
     # molecular mass of hydrogen (kg/mol): M_h2 = M_a * G_h2
     params[:h2_molar_mass] = 0.02896 * params[:h2_specific_gravity]
+
+    params[:ng_calorific_value] = 44.2 #MJ/kg
+    params[:h2_calorific_value] = 141.8 #MJ/kg
+
+    params[:ng_specific_heat_ratio] = 4/3
+    params[:h2_specific_heat_ratio] = 7/5
+
+    params[:mach_number] = 1/(300)
+
     params[:warning] = "R, temperature are in SI units. Rest are dimensionless"
 
     # speed (m/s): v_ng = sqrt(R_ng * T); 
@@ -153,7 +163,7 @@ function process_data!(data::Dict{String,Any})
     end 
     nominal_values[:velocity] =
     if isnan(params[:nominal_velocity])
-       ceil(params[:speed_geometric_mean]/300)
+       params[:speed_geometric_mean]*params[:mach_number]
     else
         params[:nominal_velocity]
     end

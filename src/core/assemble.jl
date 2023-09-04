@@ -1,29 +1,59 @@
 "Builds the JuMP model"
 
-function build_gas_model(ss::SteadyOptimizer)
+function build_gas_model(ss::SteadyOptimizer, model_type)
 
-    gas_model = JuMP.Model(Ipopt.Optimizer)
-    JuMP.set_optimizer_attribute(gas_model, "max_cpu_time", 60.0)
-    JuMP.set_optimizer_attribute(gas_model, "print_level", 5)
-    JuMP.set_optimizer_attribute(gas_model, "linear_solver", "ma27")
-
-    # ref = ss.ref
-
-    # params = ss.params
+    gas_model = JuMP.Model()
 
     gas_model, gas_variables = build_variables!(ss, gas_model)
 
-    gas_model, gas_variables, gas_constraints = build_constraints!(ss, gas_model, gas_variables)
+    if model_type == "nlp_eq"
+        gas_model, gas_variables, gas_constraints = build_constraints!(ss, gas_model, gas_variables)
+    elseif model_type == "milp"
+        gas_model, gas_variables, gas_constraints, auxiliary_variables, auxiliary_constraints = build_milp_formulation_mixed_gas!(ss, gas_model, gas_variables)
+    else
+        println("Error:undefined model_type")
+    end
 
-    JuMP.optimize!(gas_model)
+    gas_model = build_objective!(ss, gas_model, gas_variables)
 
-    status = termination_status(gas_model)
-
-    return gas_model, status
+    return gas_model, gas_variables, gas_constraints
 end
 
+struct SSReport
+    model
+    status
+    var
+    con
+    sol
+end
 
+function run_optimizer(ss::SteadyOptimizer, model_type, solver_options::Dict{Any,Any})
+   
+    model, var, con = build_gas_model(ss, model_type)
+
+    knitro_solver = JuMP.optimizer_with_attributes(KNITRO.Optimizer)
+
+    if model_type == "nlp_eq"
+        JuMP.set_optimizer(model, Ipopt.Optimizer)
+        #JuMP.set_optimizer(model,knitro_solver)
+    elseif model_type == "milp"
+        JuMP.set_optimizer(model, Gurobi.Optimizer)
+    else
+        println("Error:undefined model_type")
+    end
+
+    for i in keys(solver_options)
+        JuMP.set_optimizer_attribute(model, i, solver_options[i])
+    end
+
+    JuMP.optimize!(model)
+    status = termination_status(model)
     
+    sol = update_solution_fields_in_ref(ss, var);
+
+    return SSReport(model, status, var, con, sol)
+
+end
 
     
 

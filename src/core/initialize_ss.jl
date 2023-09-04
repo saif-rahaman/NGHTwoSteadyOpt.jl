@@ -18,10 +18,10 @@ function initialize_optimizer(data::Dict{String,Any}; eos::Symbol=:ideal)::Stead
                     params,
                     nominal_values, 
                     ref_extensions= 
-                    [add_pipe_info_at_nodes!,
-                    add_compressor_info_at_nodes!,
-                    add_dispatchable_info_at_nodes! _
-                    #update_pipe_fields!]
+                    [_add_pipe_info_at_nodes!,
+                    _add_compressor_info_at_nodes!,
+                    _add_dispatchable_info_at_nodes!] 
+                    #_update_pipe_fields!]
                     )   
 
     ss = SteadyOptimizer(data,

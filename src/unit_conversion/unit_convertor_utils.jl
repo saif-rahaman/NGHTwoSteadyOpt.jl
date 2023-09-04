@@ -50,14 +50,16 @@ function _get_data_units(rescale_functions)::Dict{Symbol,Any}
     node_units = Dict{String,Function}(
         "min_pressure" => rescale_pressure,
         "max_pressure" => rescale_pressure, 
-        "min_injection" => rescale_mass_flow, 
-        "max_injection" => rescale_mass_flow, 
+        #"min_injection" => rescale_mass_flow, 
+        #"max_injection" => rescale_mass_flow, 
     )
 
     pipe_units = Dict{String,Function}(
         "diameter" => rescale_diameter,
         "length" => rescale_length,
         "area" => rescale_area,
+        "min_pressure" => rescale_pressure,
+        "max_pressure" => rescale_pressure,
     )
 
     compressor_units = Dict{String,Function}(
@@ -65,6 +67,17 @@ function _get_data_units(rescale_functions)::Dict{Symbol,Any}
         "min_flow" => rescale_mass_flow, 
         "max_flow" => rescale_mass_flow, 
     )
+
+    delivery_units = Dict{String,Function}(
+        "min_withdrawal" => rescale_mass_flow, 
+        "max_withdrawal" => rescale_mass_flow, 
+    )
+
+    receipt_units = Dict{String,Function}(
+        "min_injection" => rescale_mass_flow, 
+        "max_injection" => rescale_mass_flow, 
+    )
+
 
     initial_pipe_flow_units = Dict{String,Function}(
         "pipe_flow" => rescale_mass_flow, 
@@ -93,6 +106,8 @@ function _get_data_units(rescale_functions)::Dict{Symbol,Any}
     units[:node_units] = node_units
     units[:pipe_units] = pipe_units
     units[:compressor_units] = compressor_units
+    units[:delivery_units] = delivery_units
+    units[:receipt_units] = receipt_units
     units[:initial_pipe_flow_units] = initial_pipe_flow_units
     units[:initial_compressor_flow_units] = initial_compressor_flow_units
     units[:initial_node_pressure_units] = initial_node_pressure_units
@@ -110,6 +125,8 @@ function _rescale_data!(data::Dict{String,Any},
     node_units = units[:node_units]
     pipe_units = units[:pipe_units]
     compressor_units = units[:compressor_units] 
+    delivery_units = units[:delivery_units]
+    receipt_units = units[:receipt_units]
     initial_pipe_flow_units = units[:initial_pipe_flow_units]
     initial_compressor_flow_units = units[:initial_compressor_flow_units]
     initial_node_pressure_units = units[:initial_node_pressure_units]
@@ -148,6 +165,22 @@ function _rescale_data!(data::Dict{String,Any},
             (!haskey(Dict(compressor), param)) && (continue)
             value = compressor[param]
             compressor[param] = f(value)
+        end 
+    end 
+
+    for (_, delivery) in get(data, "delivery", [])
+        for (param, f) in delivery_units
+            (!haskey(delivery, param)) && (continue)
+            value = delivery[param]
+            delivery[param] = f(value)
+        end 
+    end 
+
+    for (_, receipt) in get(data, "receipt", [])
+        for (param, f) in receipt_units
+            (!haskey(receipt, param)) && (continue)
+            value = receipt[param]
+            receipt[param] = f(value)
         end 
     end 
 

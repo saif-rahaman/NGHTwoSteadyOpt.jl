@@ -1,4 +1,4 @@
-function _add_components_to_ref!(ref::Dict{Symbol,Any}, data::Dict{String,Any})
+function _add_components_to_ref!(ref::Dict{Symbol,Any}, data::Dict{String,Any}, nominal_values)
 
     for (i, node) in get(data, "nodes", [])
         name = :node
@@ -6,7 +6,7 @@ function _add_components_to_ref!(ref::Dict{Symbol,Any}, data::Dict{String,Any})
         id = parse(Int64, i)
         ref[name][id] = Dict()
         @assert id == node["node_id"]
-        ref[name][id]["id"] = id
+        ref[name][id]["node_id"] = id
         ref[name][id]["is_slack"] = node["slack_bool"]
         ref[name][id]["p_min"] = node["min_pressure"]
         ref[name][id]["p_max"] = node["max_pressure"]
@@ -24,7 +24,7 @@ function _add_components_to_ref!(ref::Dict{Symbol,Any}, data::Dict{String,Any})
         id = parse(Int64, i)
         ref[name][id] = Dict()
         @assert id == pipe["pipe_id"]
-        ref[name][id]["id"] = id
+        ref[name][id]["pipe_id"] = id
         ref[name][id]["fr_node"] = pipe["from_node"]
         ref[name][id]["to_node"] = pipe["to_node"]
         ref[name][id]["diameter"] = pipe["diameter"]
@@ -46,10 +46,10 @@ function _add_components_to_ref!(ref::Dict{Symbol,Any}, data::Dict{String,Any})
         id = parse(Int64, i)
         ref[name][id] = Dict()
         @assert id == compressor["comp_id"]
-        ref[name][id]["id"] = id
+        ref[name][id]["comp_id"] = id
         ref[name][id]["to_node"] = compressor["to_node"]
         ref[name][id]["fr_node"] = compressor["from_node"]
-        ref[name][id]["control_type"] = unknown_control
+        ref[name][id]["control_type"] = 0
         ref[name][id]["c_ratio"] = NaN
         ref[name][id]["c_ratio_min"] = compressor["c_min"]
         ref[name][id]["c_ratio_max"] = compressor["c_max"]
@@ -57,6 +57,7 @@ function _add_components_to_ref!(ref::Dict{Symbol,Any}, data::Dict{String,Any})
         ref[name][id]["flow"] = NaN
         ref[name][id]["flow_min"] = compressor["min_flow"]
         ref[name][id]["flow_max"] = compressor["max_flow"]
+        ref[name][id]["max_power"] = compressor["max_power"]
         ref[name][id]["concentration_min"] = compressor["min_concentration"]
         ref[name][id]["concentration_max"] = compressor["max_concentration"]
     end
@@ -71,7 +72,8 @@ function _add_components_to_ref!(ref::Dict{Symbol,Any}, data::Dict{String,Any})
         ref[name][id]["injection_min"] = receipt["min_injection"]
         ref[name][id]["injection_max"] = receipt["max_injection"]
         ref[name][id]["injection_conc"] = receipt["concentration"]
-        ref[name][id]["offer_price"] = receipt["offer_price"]
+        ref[name][id]["h2_offer_price"] = receipt["h2_offer_price"]
+        ref[name][id]["ng_offer_price"] = receipt["ng_offer_price"]
     end
 
     for (i, delivery) in get(data, "delivery", [])
@@ -83,88 +85,27 @@ function _add_components_to_ref!(ref::Dict{Symbol,Any}, data::Dict{String,Any})
         ref[name][id]["node_id"] = delivery["node_id"]
         ref[name][id]["withdrawal_min"] = delivery["min_withdrawal"]
         ref[name][id]["withdrawal_max"] = delivery["max_withdrawal"]
-        ref[name][id]["bid_price"] = delivery["bid_price"]
+        ref[name][id]["min_heat_demand"] = delivery["min_heat_content"]/nominal_values[:mass_flow]
+        ref[name][id]["max_heat_demand"] = delivery["max_heat_content"]/nominal_values[:mass_flow]
+        ref[name][id]["h2_bid_price"] = delivery["h2_bid_price"]
+        ref[name][id]["ng_bid_price"] = delivery["ng_bid_price"]
     end
 
     ref[:non_dispatchable_receipt] = Dict()
     ref[:non_dispatchable_delivery] = Dict()
 
+    ref[:slack_nodes] = Dict()
+
+    for (i, node) in get(data, "boundary_pslack", [])
+        id = parse(Int64,i) 
+        ref[:slack_nodes][id] = Dict()
+        ref[:slack_nodes][id]["node_id"] = id
+        ref[:slack_nodes][id]["nominal_pressure"] = node["pressure"]
+        ref[:slack_nodes][id]["injection_conc"] = node["concentration"] 
+    end
+
     return
 end
-
-"""
-    Adding and Preprocessing Info
-"""
-# function _add_index_info!(ref::Dict{Symbol, Any}, data::Dict{String, Any})
-#     dofid = 1
-#     ref[:dof] = Dict{Int64, Any}()
-    
-#     for (i, node) in ref[:node]
-#         node["dof_pressure"] = dofid
-#         ref[:dof][dofid] = (:node_pressure, i)
-#         dofid += 1
-#     end
-
-#     for (i, node) in ref[:node]
-#         node["dof_concentration"] = dofid
-#         ref[:dof][dofid] = (:node_concentration, i)
-#         dofid += 1
-#     end
-
-#     for (i, node) in ref[:node]
-#         if (node["is_slack"] == 1)
-#             node["dof_slack_injection"] = dofid 
-#             ref[:dof][dofid] = (:node_slack_injection, i)
-#             dofid += 1
-#         end
-#     end 
-
-#     for (i, pipe) in ref[:pipe]
-#         pipe["dof_flow"] = dofid
-#         ref[:dof][dofid] = (:pipe_flow, i)
-#         dofid += 1
-#     end
-
-#     for (i, pipe) in ref[:pipe]
-#         pipe["dof_concentration"] = dofid
-#         ref[:dof][dofid] = (:pipe_concentration, i)
-#         dofid += 1
-#     end
-
-#     for (i, compressor) in get(ref, :compressor, [])
-#         compressor["dof_flow"] = dofid
-#         ref[:dof][dofid] = (:compressor_flow, i)
-#         dofid += 1
-#     end
-
-#     for (i, compressor) in get(ref, :compressor, [])
-#         compressor["dof_concentration"] = dofid
-#         ref[:dof][dofid] = (:compressor_concentration, i)
-#         dofid += 1
-#     end
-# end
-
-# function _add_incident_dofs_info_at_nodes!(ref::Dict{Symbol,Any}, data::Dict{String,Any})
-#     ref[:incoming_dofs] = Dict{Int64, Vector{Tuple{Int64,Int64}}}()
-#     ref[:outgoing_dofs] = Dict{Int64, Vector{Tuple{Int64,Int64}}}()
-
-#     for (i, _) in ref[:node]
-#         ref[:incoming_dofs][i] = []
-#         ref[:outgoing_dofs][i] = []
-#     end
-
-#     for (_, pipe) in ref[:pipe]
-#         push!(ref[:incoming_dofs][pipe["to_node"]], (pipe["dof_flow"], pipe["dof_concentration"]))
-#         push!(ref[:outgoing_dofs][pipe["fr_node"]], (pipe["dof_flow"], pipe["dof_concentration"]))
-#     end
-
-#     for (_, compressor) in get(ref, :compressor, [])
-#         push!(ref[:incoming_dofs][compressor["to_node"]], (compressor["dof_flow"], compressor["dof_concentration"]))
-#         push!(ref[:outgoing_dofs][compressor["fr_node"]], (compressor["dof_flow"], compressor["dof_concentration"]))
-#     end
-
-#     return
-# end
 
 function _add_pipe_info_at_nodes!(ref::Dict{Symbol,Any}, data::Dict{String,Any})
     ref[:incoming_pipes] = Dict{Int64, Vector{Int64}}()
@@ -201,24 +142,24 @@ function _add_compressor_info_at_nodes!(ref::Dict{Symbol,Any}, data::Dict{String
 end
 
 function _add_dispatchable_info_at_nodes!(ref::Dict{Symbol,Any}, data::Dict{String,Any})
-    ref[:dispatchable_receipts_in_junction] = Dict{Int64, Vector{Int64}}()
-    ref[:dispatchable_deliveries_in_junction] = Dict{Int64, Vector{Int64}}()
+    ref[:dispatchable_receipts_in_node] = Dict{Int64, Vector{Int64}}()
+    ref[:dispatchable_deliveries_in_node] = Dict{Int64, Vector{Int64}}()
 
     for (i, _) in ref[:node]
-        ref[:dispatchable_receipts_in_junction][i] = []
-        ref[:dispatchable_deliveries_in_junction][i] = []
+        ref[:dispatchable_receipts_in_node][i] = []
+        ref[:dispatchable_deliveries_in_node][i] = []
     end
 
     for (id, receipt) in ref[:dispatchable_receipt]
-        push!(ref[:dispatchable_receipts_in_junction][receipt["node_id"]], id)
+        push!(ref[:dispatchable_receipts_in_node][receipt["node_id"]], id)
     end
 
     for (id, delivery) in ref[:dispatchable_delivery]
-        push!(ref[:dispatchable_deliveries_in_junction][delivery["node_id"]], id)
+        push!(ref[:dispatchable_deliveries_in_node][delivery["node_id"]], id)
     end
 
-    ref[:nondispatchable_receipts_in_junction] = Dict{Int64, Vector{Int64}}()
-    ref[:nondispatchable_deliveries_in_junction] = Dict{Int64, Vector{Int64}}()
+    ref[:nondispatchable_receipts_in_node] = Dict{Int64, Vector{Int64}}()
+    ref[:nondispatchable_deliveries_in_node] = Dict{Int64, Vector{Int64}}()
 
     return
 end
@@ -227,16 +168,24 @@ function _update_pipe_fields!(ref::Dict{Symbol,Any}, params, nominal_values, dat
     for (_, pipe) in ref[:pipe]
         i = pipe["fr_node"]
         j = pipe["to_node"]
+        
         pd_max = ref[:node][i]["p_max"]^2 - ref[:node][j]["p_min"]^2
         pd_min = ref[:node][i]["p_min"]^2 - ref[:node][j]["p_max"]^2
+        
         lambda = pipe["friction_factor"]
-        γ_max = pipe["max_concentration"]
-        a2_max = γ_max * params[:speed_h2]^2 + (1-γ_max) * params[:speed_ng]^2
-        a2_scale = a2_max/(nominal_values[:velocity]^2)
         L = pipe["length"]
         D = pipe["diameter"]
-        pipe["resistance"] = lambda * L / D
-        w = 1 / (a2_scale * pipe["resistance"])
+        A = pipe["area"]
+        pipe["resistance"] = lambda * L / (D * A^2)
+
+        γ_min = pipe["concentration_min"]
+        a2_min = γ_min * params[:speed_h2]^2 + (1-γ_min) * params[:speed_ng]^2
+        a2_scale = a2_min/(nominal_values[:velocity]^2)
+
+        "scaling factor"
+        K = (nominal_values[:mass_flux] * nominal_values[:velocity] / nominal_values[:pressure])^2 
+
+        w = 1 / (a2_scale * pipe["resistance"] * K)
         min_flux = pd_min < 0 ? -sqrt(w * abs(pd_min)) : sqrt(w * abs(pd_min))
         max_flux = pd_max < 0 ? -sqrt(w * abs(pd_max)) : sqrt(w * abs(pd_max))
         pipe["flow_min"] = min_flux * pipe["area"]
@@ -246,20 +195,22 @@ function _update_pipe_fields!(ref::Dict{Symbol,Any}, params, nominal_values, dat
     return
 end
 
-function build_ref(data::Dict{String,Any};
+function build_ref(data::Dict{String,Any},
     params,
-    nominal_values,
+    nominal_values;
     ref_extensions=[])::Dict{Symbol,Any}
 
     ref = Dict{Symbol,Any}()
 
-    _add_components_to_ref!(ref, data)
+    _add_components_to_ref!(ref, data, nominal_values)
 
     for extension in ref_extensions
         extension(ref, data)
     end
 
     _update_pipe_fields!(ref, params, nominal_values, data)
+
+    ref[:multiplier] = ((nominal_values[:density] * nominal_values[:velocity]^2) / (nominal_values[:pressure] * params[:mach_number]))^2
 
     return ref
 end

@@ -9,5 +9,6 @@ function _initialize_solution()::Dict{String,Any}
     sol["pipe_concentration"] = Dict{Int64,Float64}()
     sol["compressor_flow"] = Dict{Int64,Float64}()
     sol["compressor_concentration"] = Dict{Int64,Float64}()
+    sol["withdrawal_heat_content"] = Dict{Int64,Float64}()
     return sol
 end
