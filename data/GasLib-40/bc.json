@@ -1,0 +1,191 @@
+{
+  "boundary_pslack": {
+    "38": {
+      "pressure": 5000000,
+      "concentration": 0.05
+    }
+  },
+  "boundary_compressor": {
+    "4": {
+      "control_type": 0,
+      "value": 1.5
+    },
+    "1": {
+      "control_type": 0,
+      "value": 1.5
+    },
+    "5": {
+      "control_type": 0,
+      "value": 1.5
+    },
+    "2": {
+      "control_type": 0,
+      "value": 1.5
+    },
+    "6": {
+      "control_type": 0,
+      "value": 1.5
+    },
+    "3": {
+      "control_type": 0,
+      "value": 1.5
+    }
+  },
+  "boundary_nonslack_flow": {
+    "32": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "29": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "24": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "12": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "20": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "25": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "23": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "22": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "11": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "35": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "13": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "27": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "31": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "15": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "33": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "28": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "16": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "14": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "39": {
+      "injection": 158.09027777777774,
+      "withdrawal": null,
+      "concentration": 0.09772310925412471
+    },
+    "40": {
+      "injection": 158.09027777777774,
+      "withdrawal": null,
+      "concentration": 0.05486072814001859
+    },
+    "21": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "34": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "36": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "26": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "17": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "10": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "19": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "37": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "9": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "18": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    },
+    "30": {
+      "injection": null,
+      "withdrawal": 16.354166666666664,
+      "concentration": null
+    }
+  }
+}
