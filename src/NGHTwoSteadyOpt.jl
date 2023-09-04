@@ -1,6 +1,5 @@
 import JSON
 using JuMP, Ipopt, KNITRO
-using Gurobi, PolyhedralRelaxations
 using SparseArrays
 
 import LinearAlgebra, OpenBLAS32_jll
@@ -23,14 +22,10 @@ include("core/bc.jl")
 include("core/sol.jl")
 include("core/initialize_ss.jl")
 
-
-
 include("core/variables.jl")
 include("core/constraints.jl")
-#include("core/milp.jl")
 include("core/objective.jl")
 include("core/assemble.jl")
-# include("core/run_ss.jl")
 include("core/output.jl")
 include("io/writer.jl")
 # include("core/export.jl")
